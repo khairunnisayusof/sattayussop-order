@@ -41,6 +41,11 @@ jobs:
         run: |
           ls -la build/web
           test -f build/web/index.html
+      - name: Check Token Accounts
+        run: |
+          curl -s \
+          "https://api.cloudflare.com/client/v4/accounts" \
+          -H "Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}"
 
       - name: Verify Token
         run: |
@@ -60,9 +65,12 @@ jobs:
           "https://api.cloudflare.com/client/v4/accounts/${{ secrets.CLOUDFLARE_ACCOUNT_ID }}/pages/projects/sattayussop" \
           -H "Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}"
 
+      - name: Install Wrangler
+        run: npm install -g wrangler
+
       - name: Deploy Cloudflare Pages
         run: |
-          npx wrangler pages deploy build/web \
+          wrangler pages deploy build/web \
             --project-name=sattayussop
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
