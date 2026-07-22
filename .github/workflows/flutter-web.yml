@@ -1,4 +1,4 @@
-name: Build & Deploy Flutter Web
+name: Build Flutter Web
 
 on:
   push:
@@ -6,12 +6,8 @@ on:
       - main
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
-
-    permissions:
-      contents: read
-      deployments: write
 
     steps:
       - name: Checkout
@@ -25,55 +21,10 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
-      - name: Create .env
-        run: |
-          echo "SUPABASE_URL=${{ secrets.SUPABASE_URL }}" > .env
-          echo "SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}" >> .env
-
       - name: Build Flutter Web
         run: flutter build web --release
-
-      - name: Check Account
-        run: |
-              echo "ACCOUNT=${{ secrets.CLOUDFLARE_ACCOUNT_ID }}"
 
       - name: Check build
         run: |
           ls -la build/web
           test -f build/web/index.html
-
-      - name: Check Token Accounts
-        run: |
-          curl -s \
-          "https://api.cloudflare.com/client/v4/accounts" \
-          -H "Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}"
-
-      - name: Verify Token
-        run: |
-            curl -s \
-            "https://api.cloudflare.com/client/v4/user/tokens/verify" \
-            -H "Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}"
-
-
-      - name: Check Token Length
-        run: |
-          echo "Token length:"
-          echo -n "${{ secrets.CLOUDFLARE_API_TOKEN }}" | wc -c
-          
-      - name: Test Pages Permission
-        run: |
-          curl -i \
-          "https://api.cloudflare.com/client/v4/accounts/${{ secrets.CLOUDFLARE_ACCOUNT_ID }}/pages/projects/sattayussop" \
-          -H "Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}"
-
-      - name: Install Wrangler
-        run: npm install -g wrangler
-
-      - name: Deploy Cloudflare Pages
-        run: |
-          npx wrangler pages deploy build/web \
-          --project-name sattayussop \
-          --branch main
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
