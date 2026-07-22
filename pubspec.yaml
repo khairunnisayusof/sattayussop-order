@@ -77,7 +77,7 @@ flutter:
   assets:
     - .env
     - image/rekod_Harian.png
-    - image/rekod_Pelanggan.png
+    - image/rekod_pelanggan.png
     - image/rekod_Pekerja.png
     - image/rekod_Gaji.png
     - image/rekod_Cucuk.png
