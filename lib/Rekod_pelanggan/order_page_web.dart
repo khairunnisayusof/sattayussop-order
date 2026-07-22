@@ -447,8 +447,7 @@ Sila isi pesanan anda di bawah dan tekan Hantar Pesanan untuk menghantar pesanan
             ),
             const SizedBox(height: 20),
             Divider(thickness: 3, height: 13, color: Colors.grey),
-            Expanded(
-              child: SingleChildScrollView(
+             SingleChildScrollView(
                 child: Table(
                   border: TableBorder.all(color: Colors.grey),
                   columnWidths: const <int, TableColumnWidth>{
@@ -547,7 +546,7 @@ Sila isi pesanan anda di bawah dan tekan Hantar Pesanan untuk menghantar pesanan
                   ],
                 ),
               ),
-            ),
+
 
             // ...order.asMap().entries.map((entry) {
             //   final index = entry.key;
