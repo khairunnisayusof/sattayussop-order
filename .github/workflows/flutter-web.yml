@@ -19,11 +19,13 @@ jobs:
 
       - run: flutter --version
       - run: flutter pub get
+      - name: Create env file
+        run: |
+          echo "SUPABASE_URL=${{ secrets.SUPABASE_URL }}" > .env
+          echo "SUPABASE_PUBLISHABLE_KEY=${{ secrets.SUPABASE_PUBLISHABLE_KEY }}" >> .env  
 
       - run: |
-          flutter build web --release \
-          --dart-define=SUPABASE_URL=${{ secrets.SUPABASE_URL }} \
-          --dart-define=SUPABASE_PUBLISHABLE_KEY=${{ secrets.SUPABASE_PUBLISHABLE_KEY }}
+          flutter build web --release
 
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/pages-action@v1
