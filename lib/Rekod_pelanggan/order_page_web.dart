@@ -501,7 +501,9 @@ Sila isi pesanan anda di bawah dan tekan Hantar Pesanan untuk menghantar pesanan
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                IconButton(
+                              Tooltip(
+                              message: "Edit",
+                              child:IconButton(
                                   icon: const Icon(Icons.edit),
                                   iconSize: 22,
                                   padding: EdgeInsets.zero,
@@ -517,9 +519,11 @@ Sila isi pesanan anda di bawah dan tekan Hantar Pesanan untuk menghantar pesanan
                                       index,
                                     );
                                   },
-                                ),
-                                const SizedBox(width: 8),
-                                IconButton(
+                                )
+                              ),
+                            Tooltip(
+                              message: "Edit",
+                              child:IconButton(
                                   icon: const Icon(
                                     Icons.remove_circle,
                                     color: Colors.red,
@@ -536,7 +540,8 @@ Sila isi pesanan anda di bawah dan tekan Hantar Pesanan untuk menghantar pesanan
                                       order.removeAt(index);
                                     });
                                   },
-                                ),
+                                )
+                            ),
                               ],
                             ),
                           ),
