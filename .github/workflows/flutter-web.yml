@@ -11,6 +11,7 @@ jobs:
 
     permissions:
       contents: read
+      deployments: write
 
     steps:
       - name: Checkout
@@ -33,7 +34,15 @@ jobs:
         run: flutter build web --release
 
       - name: Check build
-        run: ls -la build/web
+        run: |
+          ls -la build/web
+          test -f build/web/index.html
+
+      - name: Test Cloudflare Access
+        run: |
+          curl -s \
+          "https://api.cloudflare.com/client/v4/accounts/${{ secrets.CLOUDFLARE_ACCOUNT_ID }}/pages/projects/sattayussop" \
+          -H "Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}"
 
       - name: Deploy Cloudflare Pages
         uses: cloudflare/wrangler-action@v3
