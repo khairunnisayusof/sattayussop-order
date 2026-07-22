@@ -4,12 +4,9 @@ import 'package:string_capitalize/string_capitalize.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'DocumentHelper.dart';
 import 'databaseLocal.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 final supabase = Supabase.instance.client;
-class SupabaseConfig {
-  static const url = 'https://ifgsuxodlpdesffnjigw.supabase.co';
-  static const key = 'sb_publishable_0ljgZfcHhEIMadRqyCdErg_kbt0ax8-';
-}
 
 Future<List<Map<String, dynamic>>> selectTable(
     String nameTable,

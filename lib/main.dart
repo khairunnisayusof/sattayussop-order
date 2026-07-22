@@ -23,14 +23,15 @@ import 'dart:io';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../supabaseServer.dart';
 import 'login.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 Future<void> main() async {
   // runApp(MyApp());
   WidgetsFlutterBinding.ensureInitialized();
   sharedPreferences = await SharedPreferences.getInstance();
   await Supabase.initialize(
-    url: SupabaseConfig.url,
-    publishableKey: SupabaseConfig.key,
+    url: dotenv.env['SUPABASE_URL']!,
+    publishableKey: dotenv.env['SUPABASE_ANON_KEY']!,
   );
 
   runApp(
