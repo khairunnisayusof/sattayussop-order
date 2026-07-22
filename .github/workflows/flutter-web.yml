@@ -42,26 +42,23 @@ jobs:
           ls -la build/web
           test -f build/web/index.html
 
-      - name: Check Token Length
-        run: |
-            echo "Token length:"
-            echo -n "${{ secrets.CLOUDFLARE_API_TOKEN }}" | wc -c
-
-      - name: Test Cloudflare Access
-        run: |
-          curl -s \
-          "https://api.cloudflare.com/client/v4/accounts/${{ secrets.CLOUDFLARE_ACCOUNT_ID }}/pages/projects/sattayussop" \
-          -H "Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}"
-      - name: Test Cloudflare Access
-        run: |
-            curl -i \
-             "https://api.cloudflare.com/client/v4/accounts/${{ secrets.CLOUDFLARE_ACCOUNT_ID }}/pages/projects/sattayussop" \
-            -H "Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}"
       - name: Verify Token
         run: |
             curl -s \
             "https://api.cloudflare.com/client/v4/user/tokens/verify" \
             -H "Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}"
+
+
+      - name: Check Token Length
+        run: |
+          echo "Token length:"
+          echo -n "${{ secrets.CLOUDFLARE_API_TOKEN }}" | wc -c
+          
+      - name: Test Pages Permission
+        run: |
+          curl -i \
+          "https://api.cloudflare.com/client/v4/accounts/${{ secrets.CLOUDFLARE_ACCOUNT_ID }}/pages/projects/sattayussop" \
+          -H "Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}"
 
       - name: Deploy Cloudflare Pages
         run: |
