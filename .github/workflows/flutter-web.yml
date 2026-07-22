@@ -11,7 +11,6 @@ jobs:
 
     permissions:
       contents: read
-      deployments: write
 
     steps:
       - name: Checkout
@@ -33,10 +32,13 @@ jobs:
       - name: Build Flutter Web
         run: flutter build web --release
 
-      - name: Deploy to Cloudflare Pages
+      - name: Check build
+        run: ls -la build/web
+
+      - name: Deploy Cloudflare Pages
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          wranglerVersion: "4"
           command: pages deploy build/web --project-name=sattayussop-order
-          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
