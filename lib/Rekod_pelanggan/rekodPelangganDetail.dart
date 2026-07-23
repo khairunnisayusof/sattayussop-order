@@ -154,9 +154,7 @@ class _selectRekodPelangganDetailState
     String namaRunner = currentRunner.nama;
     String telRunner = currentRunner.telefon;
     String labelRunner = "Self Pickup";
-    if (runner != 12) {
-      labelRunner = '$namaRunner ($telRunner)';
-    }
+    labelRunner = telRunner.isNotEmpty ? '$namaRunner ($telRunner)' : namaRunner;
     Container buildCollectionView;
     buildCollectionView = Container(
       margin: EdgeInsets.all(5),
@@ -963,7 +961,7 @@ class _selectRekodPelangganDetailState
       context: context,
       initialDate: DateTime.now(),
       initialEntryMode: DatePickerEntryMode.calendar,
-      firstDate: DateTime(DateTime.now().year - 5),
+      firstDate: DateTime.now(),
       lastDate: DateTime(DateTime.now().year + 1),
     ).then((selectDate) {
       if (selectDate != null) {

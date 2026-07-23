@@ -55,7 +55,7 @@ class PdfInvoicePelanggan {
           .length;
       invoice = 'US${tarikhOrder.replaceAll("/", "")}$totalOrder';
     }
-    runner = runner.isEmpty
+    runner = (runner.isEmpty)
         ? "Self Pickup"
         : (() {
             final index = rekod_Runner.indexWhere(
@@ -65,7 +65,7 @@ class PdfInvoicePelanggan {
             if (index == -1) return runner;
 
             final phone = rekod_Runner[index].telefon;
-            return '$runner ($phone)';
+            return phone.isNotEmpty ? '$runner ($phone)' : runner;
           })();
     pdf.addPage(
       pw.MultiPage(

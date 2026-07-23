@@ -252,7 +252,7 @@ class _selectRekodPelangganState extends State<RekodPelanggan> {
       context: context,
       initialDate: DateTime.now(),
       initialEntryMode: DatePickerEntryMode.calendar,
-      firstDate: DateTime(DateTime.now().year - 5),
+      firstDate: DateTime.now(),
       lastDate: DateTime(DateTime.now().year + 1),
     ).then((selectDate) {
       if (selectDate != null) {

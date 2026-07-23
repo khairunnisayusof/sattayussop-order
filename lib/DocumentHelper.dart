@@ -17,6 +17,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../supabaseServer.dart';
 import '../databaseLocal.dart';
 import 'DocumentHelper.dart';
+import 'package:share_plus/share_plus.dart';
 
 SharedPreferences? sharedPreferences;
 List<rekodStok> rekod_stok = <rekodStok>[];
@@ -48,6 +49,8 @@ String role = '';
 String adminPassword = "sattayussop@1993";
 String managerPassword = "sattayussop1993";
 String pekerjaPassword = "sattayussop";
+
+String urlTempahan = "https://sattayussop.pages.dev/";
 
 Future<void> saveDataLocal() async {
   // await sharedPreferences?.remove("rekodMenu");
@@ -982,10 +985,14 @@ class DataStorage {
     // final path = await _localPath;
     var subject = "Rekod Sattay Ussop";
     var localFile = File('$path/$FileName');
-
-    final result = await Share.shareXFiles([
-      XFile(localFile.path),
-    ], subject: subject);
+    final result = await SharePlus.instance.share(
+      ShareParams(
+        text: subject,
+        files: [
+          XFile(localFile.path),
+        ],
+      ),
+    );
     if (result.status == ShareResultStatus.success) {
       print("successfully send");
       removeLocalFile(FileName);

@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 import 'package:sattayussop/Rekod_Pembekal/rekodPembekal.dart';
 import 'package:sattayussop/Rekod_Gaji/rekodGaji.dart';
 import 'package:sattayussop/Rekod_Pekerja/RekodPekerja.dart';
@@ -24,6 +25,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../supabaseServer.dart';
 import 'login.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:share_plus/share_plus.dart';
 
 Future<void> main() async {
   // runApp(MyApp());
@@ -533,6 +535,34 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
                     image: DecorationImage(
                       fit: BoxFit.fitWidth,
                       alignment: Alignment.centerLeft,
+                      image: AssetImage("image/tempahan_Online.png"),
+                    ),
+                  ),
+                ),
+                title: Text(
+                  'Tempahan Online',
+                  style: textStyle,
+                  textAlign: TextAlign.left,
+                ),
+              ),
+              onTap: () {
+                showQRTempahan(context);
+              },
+            ),
+            Divider(),
+            GestureDetector(
+              child: ListTile(
+                leading: Container(
+                  margin: EdgeInsets.only(top: 5, bottom: 5.0, left: 2.0),
+                  alignment: Alignment.centerLeft,
+                  width: 40.0,
+                  height: 40.0,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: color,
+                    image: DecorationImage(
+                      fit: BoxFit.fitWidth,
+                      alignment: Alignment.centerLeft,
                       image: AssetImage("image/Location_Kilang.png"),
                     ),
                   ),
@@ -741,42 +771,6 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   }
 
   void _sendLocationViaWsap() async {
-    // String? mobileCustomer = await showDialog<String>(
-    //   context: context,
-    //   barrierDismissible: false, // user must enter/cancel
-    //   builder: (context) {
-    //     final controller = TextEditingController();
-    //
-    //     return AlertDialog(
-    //       title: Text("Masukkan nombor pelanggan"),
-    //       content: TextField(
-    //         controller: controller,
-    //         keyboardType: TextInputType.number, // numeric keyboard
-    //         // maxLength: 8, // optional: max digits
-    //         obscureText: false,
-    //         decoration: InputDecoration(hintText: "Contoh: 0123456789"),
-    //       ),
-    //       actions: [
-    //         TextButton(
-    //           onPressed: () => Navigator.pop(context, null), // cancel
-    //           child: Text("Cancel"),
-    //         ),
-    //         TextButton(
-    //           onPressed: () => Navigator.pop(context, controller.text),
-    //           child: Text("Submit"),
-    //         ),
-    //       ],
-    //     );
-    //   },
-    // );
-    //
-    // if (mobileCustomer == null || mobileCustomer.isEmpty) {
-    //   ScaffoldMessenger.of(context).showSnackBar(
-    //     SnackBar(content: Text("Masukkan nombor pelanggan!")),
-    //   );
-    //   return;
-    // }
-
     String lat = "4.524834";
     String lng = "101.070034";
 
@@ -798,7 +792,120 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
 
     await file.writeAsBytes(byteData.buffer.asUint8List());
 
-    await Share.shareXFiles([XFile(file.path)], text: message);
+    await SharePlus.instance.share(
+      ShareParams(
+        text: message,
+        files: [
+          XFile(file.path),
+        ],
+      ),
+    );
+  }
+
+
+  void showDialogRequired(
+      BuildContext context,
+      String title,
+      String message,
+      int index,
+      ) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Tempahan Satay Online"),
+          content: Text("Pilih mesej untuk di hantar kepada pelanggan"),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Melalui Mesej'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Generate QR'),
+              onPressed: () {
+                showQRTempahan(context);
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void showQRTempahan(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+                content: SingleChildScrollView(
+                  child: SizedBox(
+                    width: 300,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Text(
+                          "Scan untuk buat pesanan",
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        QrImageView(
+                          data: urlTempahan,
+                          version: QrVersions.auto,
+                          size: 220,
+                          backgroundColor: Colors.white,
+                        ),
+                        const SizedBox(height: 20),
+                        // SelectableText(
+                        //   urlTempahan,
+                        //   textAlign: TextAlign.center,
+                        // ),
+                      ],
+                    ),
+                  ),
+                ),
+                actions: <Widget>[
+                  TextButton(
+                      child: Text("Batal"),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      }
+                  ),
+                  TextButton(
+                      child: Text("Hantar"),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        _sendTempahanOnline();
+                      }
+                  ),
+                ]
+            );
+          },
+        );
+      },
+    );
+  }
+
+  void _sendTempahanOnline() async {
+    String message =
+        "Assalamualaikum dan Salam Sejahtera.\n"
+        "Kami dari Sattay Ussop.\n\n"
+        "Anda boleh buat tempahan satay melalui online:${urlTempahan}\n\n"
+        "Selepas pesanan diterima, kami akan menghubungi anda semula untuk mengesahkan pesanan, "
+        "memaklumkan sama ada penghantaran tersedia, serta memberikan jumlah bayaran keseluruhan termasuk caj penghantaran (jika berkenaan). Terima Kasih";
+
+    await SharePlus.instance.share(
+      ShareParams(
+        text: message,
+      ),
+    );
   }
 
   void _onItemTapped(int index) {

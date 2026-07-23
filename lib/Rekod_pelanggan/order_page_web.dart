@@ -151,7 +151,7 @@ class _OrderPageState extends State<OrderPage> {
               ),
               Text(
                 "RM $textHarga",
-                style: textStyle,
+                style: textStyleNormal,
               ),
             ],
           )
@@ -274,15 +274,21 @@ class _OrderPageState extends State<OrderPage> {
           children: [
             Text(
               '''
-Sila isi pesanan anda di bawah dan tekan "Hantar Pesanan" untuk menghantar pesanan.
+Sila isi pesanan anda di bawah dan tekan "Hantar Pesanan" apabila selesai. 😊
 
-📌 Jumlah bayaran yang dipaparkan tidak termasuk caj penghantaran.
+📌 Nota: Jumlah bayaran yang dipaparkan tidak termasuk caj penghantaran.
 
-🚚 Ketersediaan perkhidmatan penghantaran adalah tertakluk kepada runner yang tersedia pada waktu pesanan dibuat. Selepas pesanan diterima, kami akan menghubungi anda melalui WhatsApp untuk mengesahkan pesanan, memaklumkan sama ada penghantaran tersedia, serta memberikan jumlah bayaran keseluruhan termasuk caj penghantaran (jika berkenaan).
-''',
+🚚 Penghantaran bergantung kepada ketersediaan runner pada waktu pesanan dibuat.
+
+Selepas kami menerima pesanan anda, kami akan menghubungi anda melalui WhatsApp untuk:
+
+✅ Mengesahkan pesanan anda.
+🚚 Memaklumkan sama ada penghantaran tersedia.
+💰 Memberikan jumlah bayaran keseluruhan termasuk caj penghantaran (jika berkenaan).''',
               style: textStyle,
               textAlign: .center,
             ),
+            const SizedBox(height: 10),
             Row(
               children: [
                 Text("Tarikh          : ", style: textStyle),
@@ -689,7 +695,7 @@ Sila isi pesanan anda di bawah dan tekan "Hantar Pesanan" untuk menghantar pesan
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        "${jumlahItem} kuantiti keseluruhan",
+                        "${jumlahItem} item",
                         style: const TextStyle(fontSize: 18),
                       ),
                       const Text(
@@ -744,8 +750,11 @@ Sila isi pesanan anda di bawah dan tekan "Hantar Pesanan" untuk menghantar pesan
       context: context,
       initialDate: DateTime.now(),
       initialEntryMode: DatePickerEntryMode.calendar,
-      firstDate: DateTime(DateTime.now().year - 5),
+      firstDate: DateTime.now(),
       lastDate: DateTime(DateTime.now().year + 1),
+      selectableDayPredicate: (day) {
+        return day.weekday != DateTime.monday;
+      },
     ).then((selectDate) {
       if (selectDate != null) {
         showTimePicker(
