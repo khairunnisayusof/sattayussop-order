@@ -895,11 +895,18 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
 
   void _sendTempahanOnline() async {
     String message =
-        "Assalamualaikum dan Salam Sejahtera.\n"
-        "Kami dari Sattay Ussop.\n\n"
-        "Anda boleh buat tempahan satay melalui online:${urlTempahan}\n\n"
-        "Selepas pesanan diterima, kami akan menghubungi anda semula untuk mengesahkan pesanan, "
-        "memaklumkan sama ada penghantaran tersedia, serta memberikan jumlah bayaran keseluruhan termasuk caj penghantaran (jika berkenaan). Terima Kasih";
+    '''
+Assalamualaikum dan Salam Sejahtera. Kami dari Sattay Ussop.
+
+Anda boleh buat tempahan melalui online: ${urlTempahan}
+
+🚚 Penghantaran bergantung kepada ketersediaan runner pada waktu pesanan dibuat.
+
+Selepas kami menerima pesanan anda, kami akan menghubungi anda semula untuk:
+
+✅ Mengesahkan pesanan anda.
+🚚 Memaklumkan sama ada penghantaran tersedia.
+💰 Memberikan jumlah bayaran keseluruhan termasuk caj penghantaran (jika berkenaan).''';
 
     await SharePlus.instance.share(
       ShareParams(

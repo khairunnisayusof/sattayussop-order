@@ -274,7 +274,7 @@ class _OrderPageState extends State<OrderPage> {
           children: [
             Text(
               '''
-Sila isi pesanan anda di bawah dan tekan "Hantar Pesanan" apabila selesai. 😊
+Sila isi pesanan anda di bawah dan tekan "Hantar Pesanan" apabila selesai.
 
 📌 Nota: Jumlah bayaran yang dipaparkan tidak termasuk caj penghantaran.
 
