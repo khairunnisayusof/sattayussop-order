@@ -112,17 +112,49 @@ class _OrderPageState extends State<OrderPage> {
     for (var i = 0; i < list.length; i++) {
       var element = list.elementAt(i);
       String nama = element.jenis;
+      String textHarga = "${element.Harga.toStringAsFixed(2)}";
+      String note = "";
       if (nama.toLowerCase().contains("cod")) {
         continue;
       } else if (nama.toLowerCase().contains("box")) {
         nama = "Box Satay";
+        note = "• jika pesanan melebihi 200 cucuk";
+      }else if (nama.toLowerCase().contains("kuah kacang")) {
+        textHarga = textHarga + " (1 Kg)";
       }
       menuList.insert(menuList.length, element);
 
       dropDownList.add(
         DropdownMenuItem<String>(
           value: "${element.id}",
-          child: Text("$nama : RM ${element.Harga.toStringAsFixed(2)}"),
+          child: Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      nama,
+                      style: titleTextStyle,
+                    ),
+                    if (note.isNotEmpty)
+                      Text(
+                        note,
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey.shade600,
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+              Text(
+                "RM $textHarga",
+                style: textStyle,
+              ),
+            ],
+          )
         ),
       );
     }
@@ -242,8 +274,11 @@ class _OrderPageState extends State<OrderPage> {
           children: [
             Text(
               '''
-Sila isi pesanan anda di bawah dan tekan Hantar Pesanan untuk menghantar pesanan.
-📌 Harga pesanan tidak termasuk caj penghantaran. Kami akan menghubungi anda melalui WhatsApp selepas pesanan diterima untuk pengesahan dan memaklumkan jumlah bayaran keseluruhan.
+Sila isi pesanan anda di bawah dan tekan "Hantar Pesanan" untuk menghantar pesanan.
+
+📌 Jumlah bayaran yang dipaparkan tidak termasuk caj penghantaran.
+
+🚚 Ketersediaan perkhidmatan penghantaran adalah tertakluk kepada runner yang tersedia pada waktu pesanan dibuat. Selepas pesanan diterima, kami akan menghubungi anda melalui WhatsApp untuk mengesahkan pesanan, memaklumkan sama ada penghantaran tersedia, serta memberikan jumlah bayaran keseluruhan termasuk caj penghantaran (jika berkenaan).
 ''',
               style: textStyle,
               textAlign: .center,
@@ -345,7 +380,16 @@ Sila isi pesanan anda di bawah dan tekan Hantar Pesanan untuk menghantar pesanan
                       const SizedBox(width: 10),
                       Expanded(
                         child: DropdownButtonFormField<String>(
-                          initialValue: selectedMenu,
+                          value: selectedMenu,
+                          items: dropDownList,
+                          selectedItemBuilder: (context) {
+                            return menuList.map((element) {
+                              return Text(
+                                element.jenis.toLowerCase().contains("box") ? "Box Satay" : element.jenis,
+                                overflow: TextOverflow.ellipsis,
+                              );
+                            }).toList();
+                          },
                           isExpanded: true,
                           autovalidateMode:
                               AutovalidateMode.onUserInteractionIfError,
@@ -356,7 +400,6 @@ Sila isi pesanan anda di bawah dan tekan Hantar Pesanan untuk menghantar pesanan
                             return null;
                           },
                           hint: Text("Sila pilih menu yang anda ingin pesan"),
-                          items: dropDownList,
                           onChanged: (value) {
                             var id = int.parse(value.toString());
                             final index = menuList.indexWhere(
@@ -446,221 +489,230 @@ Sila isi pesanan anda di bawah dan tekan Hantar Pesanan untuk menghantar pesanan
               },
             ),
             const SizedBox(height: 20),
-            Divider(thickness: 3, height: 13, color: Colors.grey),
-             SingleChildScrollView(
-                child: Table(
-                  border: TableBorder.all(color: Colors.grey),
-                  columnWidths: const <int, TableColumnWidth>{
-                    0: FlexColumnWidth(),
-                    1: FixedColumnWidth(70),
-                    2: FixedColumnWidth(60),
-                    3: FixedColumnWidth(80),
-                    4: FixedColumnWidth(80),
-                  },
-                  defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-                  children: [
-                    TableRow(
-                      children: [
-                        headerCell("Produk"),
-                        headerCell("Kuantiti"),
-                        headerCell("Harga"),
-                        headerCell("Jumlah"),
-                        headerCell("Tindakan"),
-                      ],
-                    ),
-                    // Data
-                    ...order.asMap().entries.map((entry) {
-                      final index = entry.key;
-                      final current = entry.value;
+            Divider(thickness: 2, height: 10, color: Colors.grey),
+             // SingleChildScrollView(
+             //    child: Table(
+             //      border: TableBorder.all(color: Colors.grey),
+             //      columnWidths: const <int, TableColumnWidth>{
+             //        0: FlexColumnWidth(),
+             //        1: FixedColumnWidth(70),
+             //        2: FixedColumnWidth(60),
+             //        3: FixedColumnWidth(80),
+             //        4: FixedColumnWidth(80),
+             //      },
+             //      defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+             //      children: [
+             //        TableRow(
+             //          children: [
+             //            headerCell("Produk"),
+             //            headerCell("Kuantiti"),
+             //            headerCell("Harga"),
+             //            headerCell("Jumlah"),
+             //            headerCell("Tindakan"),
+             //          ],
+             //        ),
+             //        // Data
+             //        ...order.asMap().entries.map((entry) {
+             //          final index = entry.key;
+             //          final current = entry.value;
+             //
+             //          String currentPesanan = current.pesanan.toStringAsFixed(
+             //            1,
+             //          );
+             //          if (currentPesanan.endsWith(".0")) {
+             //            currentPesanan = current.pesanan.toStringAsFixed(0);
+             //          }
+             //
+             //          return TableRow(
+             //            children: [
+             //              tableCell(
+             //                current.jenis,
+             //                onTap: () {
+             //                  showDialogTextRequired(
+             //                    context,
+             //                    "Masukkan data ${current.jenis}",
+             //                    index,
+             //                  );
+             //                },
+             //              ),
+             //              tableCell(currentPesanan),
+             //              tableCell(money(current.Harga)),
+             //              tableCell(money(current.Jumlah)),
+             //              // Actions
+             //              SizedBox(
+             //                height: 50,
+             //                child: Row(
+             //                  mainAxisAlignment: MainAxisAlignment.center,
+             //                  children: [
+             //                  Tooltip(
+             //                  message: "Edit",
+             //                  child:IconButton(
+             //                      icon: const Icon(Icons.edit),
+             //                      iconSize: 22,
+             //                      padding: EdgeInsets.zero,
+             //                      constraints: const BoxConstraints(
+             //                        minWidth: 24,
+             //                        minHeight: 24,
+             //                      ),
+             //                      splashRadius: 16,
+             //                      onPressed: () {
+             //                        showDialogTextRequired(
+             //                          context,
+             //                          "Masukkan data ${current.jenis}",
+             //                          index,
+             //                        );
+             //                      },
+             //                    )
+             //                  ),
+             //                Tooltip(
+             //                  message: "Edit",
+             //                  child:IconButton(
+             //                      icon: const Icon(
+             //                        Icons.remove_circle,
+             //                        color: Colors.red,
+             //                      ),
+             //                      iconSize: 22,
+             //                      padding: EdgeInsets.zero,
+             //                      constraints: const BoxConstraints(
+             //                        minWidth: 24,
+             //                        minHeight: 24,
+             //                      ),
+             //                      splashRadius: 16,
+             //                      onPressed: () {
+             //                        setState(() {
+             //                          order.removeAt(index);
+             //                        });
+             //                      },
+             //                    )
+             //                ),
+             //                  ],
+             //                ),
+             //              ),
+             //            ],
+             //          );
+             //        }),
+             //      ],
+             //    ),
+             //  ),
 
-                      String currentPesanan = current.pesanan.toStringAsFixed(
-                        1,
-                      );
-                      if (currentPesanan.endsWith(".0")) {
-                        currentPesanan = current.pesanan.toStringAsFixed(0);
-                      }
-
-                      return TableRow(
+            ...order.asMap().entries.map((entry) {
+              final index = entry.key;
+              final item = entry.value;
+              return Card(
+                elevation: 2,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    children: [
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          tableCell(
-                            current.jenis,
-                            onTap: () {
-                              showDialogTextRequired(
-                                context,
-                                "Masukkan data ${current.jenis}",
-                                index,
-                              );
-                            },
-                          ),
-                          tableCell(currentPesanan),
-                          tableCell(money(current.Harga)),
-                          tableCell(money(current.Jumlah)),
-                          // Actions
-                          SizedBox(
-                            height: 50,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
+                          // Bahagian kiri
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                              Tooltip(
-                              message: "Edit",
-                              child:IconButton(
-                                  icon: const Icon(Icons.edit),
-                                  iconSize: 22,
-                                  padding: EdgeInsets.zero,
-                                  constraints: const BoxConstraints(
-                                    minWidth: 24,
-                                    minHeight: 24,
+                                Text(
+                                  item.jenis,
+                                  style: const TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
                                   ),
-                                  splashRadius: 16,
-                                  onPressed: () {
-                                    showDialogTextRequired(
-                                      context,
-                                      "Masukkan data ${current.jenis}",
-                                      index,
-                                    );
-                                  },
-                                )
-                              ),
-                            Tooltip(
-                              message: "Edit",
-                              child:IconButton(
-                                  icon: const Icon(
-                                    Icons.remove_circle,
-                                    color: Colors.red,
-                                  ),
-                                  iconSize: 22,
-                                  padding: EdgeInsets.zero,
-                                  constraints: const BoxConstraints(
-                                    minWidth: 24,
-                                    minHeight: 24,
-                                  ),
-                                  splashRadius: 16,
-                                  onPressed: () {
-                                    setState(() {
-                                      order.removeAt(index);
-                                    });
-                                  },
-                                )
-                            ),
+                                ),
+
+                                const SizedBox(height: 8),
+
+                                Text(
+                                  "Kuantiti : ${item.pesanan}",
+                                  style: const TextStyle(fontSize: 15),
+                                ),
                               ],
                             ),
                           ),
-                        ],
-                      );
-                    }),
-                  ],
-                ),
-              ),
 
+                          // Bahagian kanan
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Text(
+                                "RM ${item.Jumlah.toStringAsFixed(2)}",
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: color,
+                                ),
+                              ),
 
-            // ...order.asMap().entries.map((entry) {
-            //   final index = entry.key;
-            //   final item = entry.value;
-            //   return Card(
-            //     margin: const EdgeInsets.only(bottom: 10),
-            //     child: Padding(
-            //       padding: const EdgeInsets.all(10),
-            //       child: Row(
-            //         children: [
-            //           Expanded(
-            //             child: Column(
-            //               crossAxisAlignment: CrossAxisAlignment.start,
-            //               children: [
-            //                 Text(
-            //                   item.jenis,
-            //                   style: TextStyle(
-            //                     fontSize: 18,
-            //                     fontWeight: FontWeight.bold,
-            //                   ),
-            //                 ),
-            //                 const SizedBox(height: 5),
-            //                 Text(
-            //                   "${item.pesanan} * ${item.Harga} = RM ${item.Jumlah.toStringAsFixed(2)}"
-            //                 ),
-            //               ],
-            //             ),
-            //           ),
-            //
-            //           IconButton(
-            //
-            //             onPressed: () {
-            //               setState(() {
-            //                 order.removeAt(index);
-            //
-            //               });
-            //             },
-            //
-            //             icon: const Icon(Icons.remove_circle),
-            //
-            //           ),
-            //
-            //           // Text(
-            //           //   item.qty.toString(),
-            //           //   style: const TextStyle(fontSize: 18),
-            //           // ),
-            //
-            //           // IconButton(
-            //           //
-            //           //   onPressed: () {
-            //           //
-            //           //     setState(() {
-            //           //
-            //           //       item.qty++;
-            //           //
-            //           //     });
-            //           //
-            //           //   },
-            //           //
-            //           //   icon: const Icon(Icons.add_circle),
-            //           //
-            //           // ),
-            //
-            //         ],
-            //       ),
-            //     ),
-            //   );
-            // }),
-            const SizedBox(height: 20),
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(15),
+                              const SizedBox(height: 15),
 
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-
-                      children: [
-                        const Text("Jumlah Item"),
-
-                        Text(jumlahItem.toString()),
-                      ],
-                    ),
-
-                    const SizedBox(height: 10),
-
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-
-                      children: [
-                        const Text(
-                          "Jumlah Bayaran",
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-
-                        Text(
-                          "RM ${total.toStringAsFixed(2)}",
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20,
+                              Row(
+                                children: [
+                                  IconButton(
+                                    icon: const Icon(Icons.edit),
+                                    onPressed: () {
+                                      showDialogTextRequired(context, "Kemaskini order ${item.jenis}", index);
+                                    },
+                                  ),
+                                  IconButton(
+                                    icon: const Icon(
+                                      Icons.delete,
+                                      color: Colors.red,
+                                    ),
+                                    onPressed: () {
+                                      setState(() {
+                                        order.removeAt(index);
+                                      });
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ],
                           ),
-                        ),
-                      ],
-                    ),
-                  ],
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
+              );
+
+            }),
+            const SizedBox(height: 20),
+            Container(
+              padding: const EdgeInsets.all(10),
+              child: Column(
+                children: [
+                  order.isNotEmpty ? Divider(thickness: 2, height: 10, color: Colors.grey) : const SizedBox(height: 0),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "${jumlahItem} kuantiti keseluruhan",
+                        style: const TextStyle(fontSize: 18),
+                      ),
+                      const Text(
+                        "Jumlah Bayaran",
+                        style: TextStyle(fontSize: 18),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: Text(
+                      "RM ${total.toStringAsFixed(2)}",
+                      style: TextStyle(
+                        fontSize: 32,
+                        fontWeight: FontWeight.bold,
+                        color: color,
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ),
+            )
           ],
         ),
       ),
@@ -767,12 +819,10 @@ Sila isi pesanan anda di bawah dan tekan Hantar Pesanan untuk menghantar pesanan
     bool newMenu = false,
   }) {
     final formKey = GlobalKey<FormState>();
-
     final myController = TextEditingController();
     final myController1 = TextEditingController();
     final myController2 = TextEditingController();
     final FocusNode myFocusNode = FocusNode();
-
     // Initialize controllers if editing existing item
     if (index >= 0) {
       final current = order.elementAt(index);
@@ -785,12 +835,9 @@ Sila isi pesanan anda di bawah dan tekan Hantar Pesanan untuk menghantar pesanan
     }
     final values = dropDownList.map((e) => e.value).toList();
     bool isNewMenu = newMenu;
-
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
+    showDialog(context: context,builder: (BuildContext context) {
         return StatefulBuilder(
-          builder: (context, setState) {
+          builder: (context, dialogSetState) {
             return AlertDialog(
               title: Text(title),
               content: SizedBox(
@@ -883,31 +930,24 @@ Sila isi pesanan anda di bawah dan tekan Hantar Pesanan untuk menghantar pesanan
                 TextButton(
                   child: Text("Simpan"),
                   onPressed: () {
-                    Navigator.of(context).pop();
-                    if (formKey.currentState!.validate()) {
+                    if (!formKey.currentState!.validate()) return;
                       num pesanan = myController1.text.totalDoubleNumber();
                       num harga = myController2.text.isEmpty
                           ? 0
                           : myController2.text.toDoubleNumberFormat();
                       String nama = myController.text;
                       num jumlah = pesanan * harga;
-
+                      print("order jenis ni >> ${index} >> ${order[index].jenis}");
                       if (index >= 0) {
                         // Update existing
-                        final current = order.elementAt(index);
-                        current.jenis = nama;
-                        current.pesanan = pesanan;
-                        current.Harga = harga;
-                        current.Jumlah = jumlah;
-                        // insertServer(current, index);
-                      } else {
-                        // Add new
-                        // insertServer(
-                        //   rekodPesananPelanggan(pelangganID,nama, pesanan, harga, jumlah),
-                        //   index,
-                        // );
+                        setState(() {
+                          order[index].jenis = nama;
+                          order[index].pesanan = pesanan;
+                          order[index].Harga = harga;
+                          order[index].Jumlah = jumlah;
+                        });
                       }
-                    }
+                    Navigator.of(context).pop();
                   },
                 ),
               ],

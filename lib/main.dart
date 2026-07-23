@@ -32,9 +32,20 @@ Future<void> main() async {
   await dotenv.load(
     fileName: ".env",
   );
+  final url = dotenv.env['SUPABASE_URL'];
+
+  if (url == null) {
+    throw Exception("SUPABASE_URL not found");
+  }
+
+  final urlKey = dotenv.env['SUPABASE_PUBLISHABLE_KEY'];
+
+  if (urlKey == null) {
+    throw Exception("SUPABASE_PUBLISHABLE_KEY not found");
+  }
   await Supabase.initialize(
-    url: dotenv.env['SUPABASE_URL']!,
-    publishableKey: dotenv.env['SUPABASE_PUBLISHABLE_KEY']!,
+    url: url,
+    publishableKey: urlKey,
   );
 
   runApp(
