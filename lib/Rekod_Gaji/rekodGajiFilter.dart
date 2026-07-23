@@ -5,9 +5,8 @@ import '../DocumentHelper.dart';
 import '../databaseLocal.dart';
 
 class selectRekodGajiFilter extends StatefulWidget {
-  const selectRekodGajiFilter({super.key, required this.pekerja});
+  const selectRekodGajiFilter({super.key});
 
-  final List<rekodPekerja> pekerja;
 
   @override
   State<selectRekodGajiFilter> createState() => _selectRekodGajiFilterState();
@@ -52,15 +51,21 @@ class _selectRekodGajiFilterState extends State<selectRekodGajiFilter> {
       color = Colors.deepOrange;
       colorBorder = Colors.white;
     }
-    pekerja = widget.pekerja;
-    for (var index = 0; index < pekerja.length; index++) {
-      rekodPekerja list = pekerja.elementAt(index);
-      var username = list.username;
-      var nama = list.nama;
-      dropDownList.add(
-        DropdownMenuItem<String>(value: username, child: Text(nama)),
-      );
+    for (var index = 0; index < rekod_Pekerja.length; index++) {
+      rekodPekerja current = rekod_Pekerja.elementAt(index);
+      var username = current.username;
+      var nama = current.nama;
+      if (!current.cucuk) {
+        dropDownList.add(
+          DropdownMenuItem<String>(
+            value: username.isEmpty == true ? null : username,
+            child: Text(nama),
+          ),
+        );
+        pekerja.add(current);
+      }
     }
+    pekerja.sort((a, b) => a.username.compareTo(b.username));
     dropDownList.insert(
       0,
       DropdownMenuItem<String>(

@@ -283,6 +283,7 @@ class _selectRekodPekerjaState extends State<selectRekodPekerja> {
     final formKey = GlobalKey<FormState>();
     bool cucukSatay = false;
     bool accessApps = false;
+    bool slipGaji = false;
     String role = 'Pekerja';
     if (index >= 0) {
       String nama = _rekodPekerjaView.elementAt(index);
@@ -291,7 +292,8 @@ class _selectRekodPekerjaState extends State<selectRekodPekerja> {
       );
       rekodPekerja current = rekod_Pekerja.elementAt(indexSelected);
       cucukSatay = current.cucuk;
-      accessApps = current.aktif;
+      accessApps = current.akses_sistem;
+      slipGaji = current.slip_gaji;
       if (current.nama.isNotEmpty) {
         myController.text = current.nama;
       }
@@ -492,6 +494,24 @@ class _selectRekodPekerjaState extends State<selectRekodPekerja> {
                             ),
                           ],
                         ),
+                        Row(
+                          children: <Widget>[
+                            Text(
+                              'Slip Gaji :',
+                              style: textStyle,
+                              textAlign: TextAlign.left,
+                            ),
+                            Switch(
+                              value: slipGaji,
+                              onChanged: (value) {
+                                setState(() {
+                                  slipGaji = value;
+                                });
+                              },
+                              activeThumbColor: color,
+                            ),
+                          ],
+                        ),
                       ],
                     ),
                   ),
@@ -544,6 +564,7 @@ class _selectRekodPekerjaState extends State<selectRekodPekerja> {
                       role,
                       accessApps,
                       rekod,
+                        slipGaji
                     ),
                     index,
                   );
@@ -589,9 +610,9 @@ class _selectRekodPekerjaState extends State<selectRekodPekerja> {
           .id;
       pekerja.id = id;
       print("rekod >>> $id | ${pekerja.toMapServer()} ");
-      // insertUpdateTable('Pekerja Rekod', pekerja.toMapServer(), id: id);
+      insertUpdateTable('Pekerja Rekod', pekerja.toMapServer(), id: id);
     } else {
-      // insertUpdateTable('Pekerja Rekod', pekerja.toMapServer());
+      insertUpdateTable('Pekerja Rekod', pekerja.toMapServer());
     }
     addItem(pekerja, index);
   }

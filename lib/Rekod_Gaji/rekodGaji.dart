@@ -42,7 +42,7 @@ class _selectRekodGajiState extends State<selectRekodGaji> {
       rekodPekerja current = rekod_Pekerja.elementAt(index);
       var username = current.username;
       var nama = current.nama;
-      if (!current.cucuk && (current.role == "Pekerja")) {
+      if (!current.cucuk && current.slip_gaji) {
         dropDownList.add(
           DropdownMenuItem<String>(
             value: username.isEmpty == true ? null : username,
@@ -99,12 +99,18 @@ class _selectRekodGajiState extends State<selectRekodGaji> {
               ],
             ),
             onTap: () {
+              final List<rekodPekerja> pekerja = <rekodPekerja>[];
+              for (var index = 0; index < rekod_Pekerja.length; index++) {
+                rekodPekerja current = rekod_Pekerja.elementAt(index);
+                if (!current.cucuk) {
+                  pekerja.add(current);
+                }
+              }
               Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (context) => selectRekodGajiDetail(
                     selectIndex: index,
-                    pekerja: _rekodPekerja,
                   ),
                 ),
               );
@@ -139,7 +145,7 @@ class _selectRekodGajiState extends State<selectRekodGaji> {
               context,
               MaterialPageRoute(
                 builder: (context) =>
-                    selectRekodGajiFilter(pekerja: _rekodPekerja),
+                    selectRekodGajiFilter(),
               ),
             );
           } else if (item == '5') {
@@ -355,8 +361,7 @@ class _selectRekodGajiState extends State<selectRekodGaji> {
       int idPekerja = current.id;
       num simpan = current.gajiSimpan;
       num harian = current.gajiHarian;
-      if (!current.cucuk &&
-          (current.role == "Pekerja" && !(simpan <= 0 && harian <= 0))) {
+      if (!current.cucuk && current.slip_gaji) {
         rekodGajiDetail rekodDetail = rekodGajiDetail(
           resultRekod.id,
           idPekerja,

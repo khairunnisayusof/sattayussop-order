@@ -11,11 +11,9 @@ class selectRekodGajiDetail extends StatefulWidget {
   const selectRekodGajiDetail({
     super.key,
     required this.selectIndex,
-    required this.pekerja,
   });
 
   final int selectIndex;
-  final List<rekodPekerja> pekerja;
 
   @override
   State<selectRekodGajiDetail> createState() => _selectRekodGajiDetailState();
@@ -61,20 +59,25 @@ class _selectRekodGajiDetailState extends State<selectRekodGajiDetail> {
       colorBorder = Colors.white;
     }
     NotificationCenter().subscribe('refreshData', _refreshView);
-    pekerja = widget.pekerja;
     selectIndex = widget.selectIndex;
     rekodGaji current = rekod_Gaji.elementAt(selectIndex);
     id = current.id;
     tarikh = current.tarikh;
-    pekerja.sort((a, b) => a.username.compareTo(b.username));
-    print("rekod in detail >> ${pekerja.length} ");
-    for (var index = 0; index < pekerja.length; index++) {
-      rekodPekerja list = pekerja.elementAt(index);
-      var nama = list.nama;
-      dropDownList.add(
-        DropdownMenuItem<String>(value: nama, child: Text(nama)),
-      );
+    for (var index = 0; index < rekod_Pekerja.length; index++) {
+      rekodPekerja current = rekod_Pekerja.elementAt(index);
+      var username = current.username;
+      var nama = current.nama;
+      if (!current.cucuk) {
+        dropDownList.add(
+          DropdownMenuItem<String>(
+            value: username.isEmpty == true ? null : username,
+            child: Text(nama),
+          ),
+        );
+        pekerja.add(current);
+      }
     }
+    pekerja.sort((a, b) => a.username.compareTo(b.username));
     _refreshView(true);
     super.initState();
   }
@@ -460,7 +463,7 @@ class _selectRekodGajiDetailState extends State<selectRekodGajiDetail> {
     String errorText = "Sila masukkan beberapa digit";
     final formKey = GlobalKey<FormState>();
     // declare a variable to keep track of the input text
-    rekodGajiDetail current = rekodGajiDetail(-1, -1, 0.00, 0.00);
+    rekodGajiDetail current = rekodGajiDetail(id, -1, 0.00, 0.00);
     int pekerjaID = -1;
     if (index >= 0) {
       current = _rekodGajiDetail.elementAt(index);
@@ -519,7 +522,6 @@ class _selectRekodGajiDetailState extends State<selectRekodGajiDetail> {
                             : DropdownButtonFormField(
                                 isExpanded: true,
                                 onChanged: (item) {
-                                  validator:
                                   (value) {
                                     if (value == null || value.isEmpty) {
                                       return errorText;
@@ -598,11 +600,10 @@ class _selectRekodGajiDetailState extends State<selectRekodGajiDetail> {
               onPressed: () {
                 // Handle the submit action
                 String nama = myController.text.capitalizeEach();
-                print("nama >> $nama");
+                print("nama >> $nama >> ${pekerjaID}");
                 num simpan = 0.0;
                 num harian = 0.0;
                 if (formKey.currentState!.validate()) {
-                  Navigator.of(context).pop();
                   if (!(myController2.text.isEmpty)) {
                     simpan = myController2.text.totalDoubleNumber();
                   }
@@ -611,7 +612,7 @@ class _selectRekodGajiDetailState extends State<selectRekodGajiDetail> {
                   }
                   if (index < 0) {
                     current = rekodGajiDetail(
-                      current.id,
+                      id,
                       pekerjaID,
                       simpan,
                       harian,
@@ -621,9 +622,10 @@ class _selectRekodGajiDetailState extends State<selectRekodGajiDetail> {
                     current.harian = harian;
                   }
                   print(
-                    "rekod detail >> $index : ${current.pekerja_id} = ${_rekodGajiDetail.elementAt(index).id} | ${current.toMap()}",
+                    "rekod detail >> $index : ${current.pekerja_id} = ${current.toMap()}",
                   );
                   insertDetailServer(current, index);
+                  Navigator.of(context).pop();
                 }
               },
             ),

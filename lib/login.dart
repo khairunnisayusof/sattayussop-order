@@ -200,7 +200,7 @@ class _LoginPageState extends State<LoginPage> {
       var pekerjaList = rekodPekerja.fromJson(user);
       role = pekerjaList.role;
       user_id = pekerjaList.id;
-      bool aktif = pekerjaList.aktif;
+      bool akses_sistem = pekerjaList.akses_sistem;
 
       if (user_id <= 0) {
         if (!mounted) return;
@@ -213,7 +213,7 @@ class _LoginPageState extends State<LoginPage> {
         );
         return;
       }
-      if (!aktif) {
+      if (!akses_sistem) {
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(

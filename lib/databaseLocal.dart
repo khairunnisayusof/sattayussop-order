@@ -42,7 +42,8 @@ class rekodPekerja {
   bool cucuk;
   List<dynamic> rekodAmbil;
   String role = 'Pekerja';
-  bool aktif = false;
+  bool akses_sistem = false;
+  bool slip_gaji = false;
 
   rekodPekerja(
     this.nama,
@@ -54,8 +55,9 @@ class rekodPekerja {
     this.gajiSimpan,
     this.cucuk,
     this.role,
-    this.aktif,
+    this.akses_sistem,
     this.rekodAmbil,
+      this.slip_gaji
   );
 
   rekodPekerja.fromMap(
@@ -72,7 +74,8 @@ class rekodPekerja {
       gajiSimpan = map["gajiSimpan"],
       cucuk = map["cucuk"],
       role = map["role"],
-      aktif = map["aktif"],
+        akses_sistem = map["akses sistem"],
+        slip_gaji = map["slip gaji"],
       rekodAmbil = (map["Ambil Gaji Rekod"] ?? [])
           .map((e) => rekodAmbilGaji.fromMap(Map<String, dynamic>.from(e)))
           .toList();
@@ -90,7 +93,8 @@ class rekodPekerja {
       "gajiSimpan": gajiSimpan,
       "cucuk": cucuk,
       "role": role,
-      "aktif": aktif,
+      "akses sistem": akses_sistem,
+      "slip gaji" : slip_gaji,
       "Ambil Gaji Rekod": rekodAmbil.map((e) => e.toMap()).toList(),
     };
   }
@@ -108,7 +112,8 @@ class rekodPekerja {
       "gajiSimpan": gajiSimpan,
       "cucuk": cucuk,
       "role": role,
-      "aktif": aktif,
+      "akses sistem": akses_sistem,
+      "slip gaji" : slip_gaji,
     };
   }
 
