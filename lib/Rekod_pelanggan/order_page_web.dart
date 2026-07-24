@@ -297,7 +297,8 @@ class _OrderPageState extends State<OrderPage> {
           builder: (context, setState) {
             return AlertDialog(
               title: const Text("📢 Perhatian"),
-              content: Column(
+              content: SingleChildScrollView(
+                child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   const Text(
@@ -316,7 +317,7 @@ class _OrderPageState extends State<OrderPage> {
                     },
                   )
                 ],
-              ),
+              )),
               actions: [
                 ElevatedButton(
                   onPressed: agree
@@ -563,66 +564,133 @@ Sila isi pesanan anda di bawah dan tekan "Hantar Pesanan" apabila selesai.''',
       ),
       child: Padding(
         padding: const EdgeInsets.all(12),
-        child: Row(
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+        child:LayoutBuilder(
+            builder: (context, constraints) {
+              return Row(
                 children: [
-                  Text(
-                    item.jenis,
-                    style: titleTextStyle,
-                    overflow: TextOverflow.ellipsis,
-                  ),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          item.jenis,
+                          style: titleTextStyle,
+                          overflow: TextOverflow.ellipsis,
+                        ),
 
-                  const SizedBox(height: 4),
+                        const SizedBox(height: 4),
 
-                  Text(
-                    "RM ${item.Harga.toStringAsFixed(2)}",
-                  ),
+                        Text(
+                          "RM ${item.Harga.toStringAsFixed(2)}",
+                        ),
 
-                  if (note.isNotEmpty)
-                    Text(
-                      note,
-                      style: const TextStyle(
-                        fontSize: 12,
-                        color: Colors.grey,
-                      ),
+                        if (note.isNotEmpty)
+                          Text(
+                            note,
+                            style: const TextStyle(
+                              fontSize: 12,
+                              color: Colors.grey,
+                            ),
+                          ),
+                      ],
                     ),
-                ],
-              ),
-            ),
+                  ),
 
-            const SizedBox(width: 8),
+                  const SizedBox(width: 8),
 
-            QuantityButton(
+                  if (constraints.maxWidth > 250)
+
+                  QuantityButton(
               quantity: item.pesanan,
               colors: color,
               onChanged: (qty) {
-                setState(() {
-                  item.Harga = item.Harga.toDouble();
-                  item.pesanan = qty;
-                  item.Jumlah = qty * item.Harga.toDouble();
+              setState(() {
+              item.Harga = item.Harga.toDouble();
+              item.pesanan = qty;
+              item.Jumlah = qty * item.Harga.toDouble();
 
-                  var orderIndex =
-                  order.indexWhere((e) => e.jenis == item.jenis);
+              var orderIndex =
+              order.indexWhere((e) => e.jenis == item.jenis);
 
-                  if (qty > 0) {
-                    if (orderIndex >= 0) {
-                      order[orderIndex] = item;
-                    } else {
-                      order.insert(order.length, item);
-                    }
-                  } else {
-                    if (orderIndex >= 0) {
-                      order.removeAt(orderIndex);
-                    }
-                  }
-                });
+              if (qty > 0) {
+              if (orderIndex >= 0) {
+              order[orderIndex] = item;
+              } else {
+              order.insert(order.length, item);
+              }
+              } else {
+              if (orderIndex >= 0) {
+              order.removeAt(orderIndex);
+              }
+              }
+              });
               },
-            ),
-          ],
-        ),
+              )
+                  else
+                    FittedBox(
+                        child:
+                        QuantityButton(
+                          quantity: item.pesanan,
+                          colors: color,
+                          onChanged: (qty) {
+                            setState(() {
+                              item.Harga = item.Harga.toDouble();
+                              item.pesanan = qty;
+                              item.Jumlah = qty * item.Harga.toDouble();
+
+                              var orderIndex =
+                              order.indexWhere((e) => e.jenis == item.jenis);
+
+                              if (qty > 0) {
+                                if (orderIndex >= 0) {
+                                  order[orderIndex] = item;
+                                } else {
+                                  order.insert(order.length, item);
+                                }
+                              } else {
+                                if (orderIndex >= 0) {
+                                  order.removeAt(orderIndex);
+                                }
+                              }
+                            });
+                          },
+                        )
+                    ),
+                  // SizedBox(
+                  //   width: 100,
+                  //   child: FittedBox(
+                  //     fit: BoxFit.scaleDown,
+                  //     child: QuantityButton(
+                  //       quantity: item.pesanan,
+                  //       colors: color,
+                  //       onChanged: (qty) {
+                  //         setState(() {
+                  //           item.Harga = item.Harga.toDouble();
+                  //           item.pesanan = qty;
+                  //           item.Jumlah = qty * item.Harga.toDouble();
+                  //
+                  //           var orderIndex =
+                  //           order.indexWhere((e) => e.jenis == item.jenis);
+                  //
+                  //           if (qty > 0) {
+                  //             if (orderIndex >= 0) {
+                  //               order[orderIndex] = item;
+                  //             } else {
+                  //               order.insert(order.length, item);
+                  //             }
+                  //           } else {
+                  //             if (orderIndex >= 0) {
+                  //               order.removeAt(orderIndex);
+                  //             }
+                  //           }
+                  //         });
+                  //       },
+                  //     ),
+                  //   ),
+                  // ),
+                ],
+              );
+            }),
       ),
     );
   }
