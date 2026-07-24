@@ -282,8 +282,190 @@ class _OrderPageState extends State<OrderPage> {
           },
         ),
       ),
-      body: viewListOrder(),
-    );
+      body: Form(
+        key: _formKeyDetail,
+        child: ListView(
+          children: [
+            Text(
+              '''
+Sila isi pesanan anda di bawah dan tekan "Hantar Pesanan" apabila selesai.''',
+              style: textStyle,
+              textAlign: .center,
+            ),
+            const SizedBox(height: 10),
+            Row(
+              children: [
+                Text("Tarikh          : ", style: textStyle),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Form(
+                    key: _formKeyDate,
+                    child: Column(
+                      children: [
+                        TextFormField(
+                          controller: dateController,
+                          readOnly: true,
+                          onTap: () => _selectDate(context),
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Sila pilih tarikh';
+                            }
+                            return null;
+                          },
+                          decoration: InputDecoration(labelText: ""),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            Row(
+              children: [
+                Text("Nama          : ", style: textStyle),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: TextFormField(
+                    controller: namaController,
+                    decoration: const InputDecoration(labelText: ""),
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Sila masukkan nama anda';
+                      }
+                      return null;
+                    },
+                    focusNode: namaFocus,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            Row(
+              children: [
+                Text("No Telefon  : ", style: textStyle),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: TextFormField(
+                    controller: phoneController,
+                    keyboardType: TextInputType.phone,
+                    decoration: InputDecoration(labelText: ""),
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    validator: (value) {
+                      if (value == null || value
+                          .trim()
+                          .isEmpty) {
+                        return "Sila masukkan no. telefon anda untuk kami hubungi.";
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            Row(
+              children: [
+                Text("Alamat         : ", style: textStyle),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: TextField(
+                    controller: alamatController,
+                    keyboardType: TextInputType.multiline,
+                    decoration: const InputDecoration(labelText: ""),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+            Divider(thickness: 2, height: 10, color: Colors.grey),
+            const SizedBox(height: 20),
+            Center(child: Text("SENARAI MENU SATTAY USSOP", style: TextStyle(
+              fontSize: 20.0,
+              fontWeight: FontWeight.bold,
+            ))),
+            const SizedBox(height: 10),
+            ListBody(
+                  children: grouped.entries.map((entry) {
+                    String kategori = entry.key;
+                    List<rekodPesananPelanggan> menus = entry.value;
+                    // var icon = Icons.restaurant_menu;
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // HEADER KATEGORI
+                        Container(
+                          width: double.infinity,
+                          margin: const EdgeInsets.only(top: 16, bottom: 8),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 12,
+                          ),
+                          decoration: BoxDecoration(
+                            color: color,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Text(
+                            kategori,
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+
+                        // LIST MENU
+                        ...menus.map((item) {
+                          return buildMenu(item);
+                        }),
+
+                      ],
+                    );
+                  }).toList(),
+                ),
+            const SizedBox(height: 20),
+            Container(
+              padding: const EdgeInsets.all(10),
+              child: Column(
+                children: [
+                  order.isNotEmpty
+                      ? Divider(thickness: 2, height: 10, color: Colors.grey)
+                      : const SizedBox(height: 0),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "${jumlahItem} item",
+                        style: const TextStyle(fontSize: 18),
+                      ),
+                      const Text(
+                        "Jumlah Bayaran",
+                        style: TextStyle(fontSize: 18),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: Text(
+                      "RM ${total.toStringAsFixed(2)}",
+                      style: TextStyle(
+                        fontSize: 32,
+                        fontWeight: FontWeight.bold,
+                        color: color,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            )
+          ]
+        )
+        )
+      );
   }
 
   Future<void> showNotice() async {
@@ -441,7 +623,9 @@ Sila isi pesanan anda di bawah dan tekan "Hantar Pesanan" apabila selesai.''',
                   fontWeight: FontWeight.bold,
                 ))),
                 Expanded(
-                    child:Column(
+                    child:ListView(
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
                       children: grouped.entries.map((entry) {
                         String kategori = entry.key;
                         List<rekodPesananPelanggan> menus = entry.value;
