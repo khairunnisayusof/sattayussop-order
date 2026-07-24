@@ -434,63 +434,52 @@ Sila isi pesanan anda di bawah dan tekan "Hantar Pesanan" apabila selesai.''',
           ),
           const SizedBox(height: 20),
           Divider(thickness: 2, height: 10, color: Colors.grey),
-          SizedBox(
-            height: 40,
-            child: Center(child: Text("SENARAI MENU SATTAY USSOP", style: TextStyle(
-              fontSize: 20.0,
-              fontWeight: FontWeight.bold,
-            ))),
-          ),
-          // Expanded(
-          //   child: Column(
-          //     children: grouped.entries.map((entry) {
-          //       String kategori = entry.key;
-          //       List<rekodPesananPelanggan> menus = entry.value;
-          //       // var icon = Icons.restaurant_menu;
-          //       return Column(
-          //         crossAxisAlignment: CrossAxisAlignment.start,
-          //         children: [
-          //           // HEADER KATEGORI
-          //           Container(
-          //             margin: const EdgeInsets.fromLTRB(12, 16, 12, 8),
-          //             padding: const EdgeInsets.symmetric(
-          //               horizontal: 16,
-          //               vertical: 12,
-          //             ),
-          //             decoration: BoxDecoration(
-          //               color: color,
-          //               borderRadius: BorderRadius.circular(12),
-          //             ),
-          //             child: Row(
-          //               children: [
-          //                 //  Icon(
-          //                 //   icon,
-          //                 //   color: Colors.white,
-          //                 // ),
-          //                 // const SizedBox(width: 10),
-          //                 Text(
-          //                   kategori,
-          //                   style: const TextStyle(
-          //                     fontSize: 20,
-          //                     fontWeight: FontWeight.bold,
-          //                     color: Colors.white,
-          //                   ),
-          //                 ),
-          //               ],
-          //             ),
-          //           ),
-          //
-          //           // LIST MENU
-          //           ...menus.map((item) {
-          //             return buildMenu(item);
-          //           }),
-          //
-          //         ],
-          //       );
-          //     }).toList(),
-          //   ),
-          // ),
+          Column(
+              children: [
+                Center(child: Text("SENARAI MENU SATTAY USSOP", style: TextStyle(
+                  fontSize: 20.0,
+                  fontWeight: FontWeight.bold,
+                ))),
+                Expanded(
+                    child:Column(
+                      children: grouped.entries.map((entry) {
+                        String kategori = entry.key;
+                        List<rekodPesananPelanggan> menus = entry.value;
+                        // var icon = Icons.restaurant_menu;
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // HEADER KATEGORI
+                            Container(
+                              margin: const EdgeInsets.fromLTRB(12, 16, 12, 8),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 12,
+                              ),
+                              decoration: BoxDecoration(
+                                color: color,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Text(
+                                kategori,
+                                style: const TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
 
+                            // LIST MENU
+                            ...menus.map((item) {
+                              return buildMenu(item);
+                            }),
+
+                          ],
+                        );
+                      }).toList(),
+                    )),
+          ]),
           const SizedBox(height: 20),
           Container(
             padding: const EdgeInsets.all(10),
