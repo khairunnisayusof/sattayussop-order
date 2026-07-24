@@ -40,7 +40,6 @@ class _OrderPageState extends State<OrderPage> {
   final _formKeyDate = GlobalKey<FormState>();
   final _formKey = GlobalKey<FormState>();
   bool darkMode = false;
-  bool firstTimeShow = true;
 
   final List<rekodMenu> menu = <rekodMenu>[];
   final num qty = 0;
@@ -106,7 +105,6 @@ class _OrderPageState extends State<OrderPage> {
 
 
   Future<void> loadData() async {
-    firstTimeShow = false;
     NotificationCenter().subscribe('refreshData', _refreshView);
     menuList.clear();
     dropDownList.clear();
@@ -212,7 +210,6 @@ class _OrderPageState extends State<OrderPage> {
   @override
   void initState() {
     super.initState();
-    if (firstTimeShow);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       showNotice();
     });
@@ -861,17 +858,20 @@ Sila isi pesanan anda di bawah dan tekan "Hantar Pesanan" apabila selesai.''',
     setState(() {
       usrID = resultRekod.id;
     });
-    for (var index = 0; index < order.length; index++) {
-      var element = order.elementAt(index);
-      element.pelanggan_id = usrID;
-      insertPelagganDetail(element, usr);
-    }
+    if (order.isNotEmpty) {
+      for (var index = 0; index < order.length; index++) {
+        var element = order.elementAt(index);
+        element.pelanggan_id = usrID;
+        insertPelagganDetail(element, usr);
+      }
+      }
     if (!rekod_stok.map((item) => item.tarikh).contains(usr.tarikh)) {
       List<dynamic> rekod = <rekodStokDetail>[];
       rekod_stok.add(
         rekodStok(epochTime, tarikhRekod, hariRekod, 0.00, 0.00, rekod),
       );
     }
+    sendTodiscord(usr);
   }
 
   Future<void> insertPelagganDetail(
@@ -885,6 +885,10 @@ Sila isi pesanan anda di bawah dan tekan "Hantar Pesanan" apabila selesai.''',
     );
     resultRekod = rekodPesananPelanggan.fromMap(result);
     usr.id = resultRekod.id;
+    sendTodiscord(usr);
+  }
+
+  void sendTodiscord(rekodPelanggan usr) async {
     try {
       final res = await supabase.functions.invoke(
         'super-api',
