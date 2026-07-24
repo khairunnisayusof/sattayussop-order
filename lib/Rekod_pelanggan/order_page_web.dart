@@ -482,7 +482,6 @@ Sila isi pesanan anda di bawah dan tekan "Hantar Pesanan" apabila selesai.''',
                       ),
                     ),
 
-
                     // LIST MENU
                     ...menus.map((item) {
                       return buildMenu(item);
@@ -565,46 +564,67 @@ Sila isi pesanan anda di bawah dan tekan "Hantar Pesanan" apabila selesai.''',
         horizontal: 12,
         vertical: 6,
       ),
-      child: ListTile(
-        title: Text(item.jenis,style: titleTextStyle),
-        subtitle: SizedBox(
-        width: double.infinity,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Row(
           children: [
-            Text("RM ${item.Harga.toStringAsFixed(2)}"),
-            if (note.isNotEmpty)
-              Text(
-                note,
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey,
-                ),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    item.jenis,
+                    style: titleTextStyle,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+
+                  const SizedBox(height: 4),
+
+                  Text(
+                    "RM ${item.Harga.toStringAsFixed(2)}",
+                  ),
+
+                  if (note.isNotEmpty)
+                    Text(
+                      note,
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey,
+                      ),
+                    ),
+                ],
               ),
+            ),
+
+            const SizedBox(width: 8),
+
+            QuantityButton(
+              quantity: item.pesanan,
+              colors: color,
+              onChanged: (qty) {
+                setState(() {
+                  item.Harga = item.Harga.toDouble();
+                  item.pesanan = qty;
+                  item.Jumlah = qty * item.Harga.toDouble();
+
+                  var orderIndex =
+                  order.indexWhere((e) => e.jenis == item.jenis);
+
+                  if (qty > 0) {
+                    if (orderIndex >= 0) {
+                      order[orderIndex] = item;
+                    } else {
+                      order.insert(order.length, item);
+                    }
+                  } else {
+                    if (orderIndex >= 0) {
+                      order.removeAt(orderIndex);
+                    }
+                  }
+                });
+              },
+            ),
           ],
-        ),
-      ),
-        trailing: QuantityButton(
-          quantity: item.pesanan,
-          colors: color,
-          onChanged: (qty) {
-            setState(() {
-              item.Harga = item.Harga.toDouble();
-              item.pesanan = qty;
-              item.Jumlah = qty * item.Harga.toDouble();
-              var orderIndex = order.indexWhere((e) => e.jenis == item.jenis);
-              if (qty > 0) {
-                if (orderIndex >= 0) {
-                  order[orderIndex] = item;
-                }else {
-                  order.insert(order.length, item);
-                }
-              } else {
-                order.removeAt(orderIndex);
-              }
-              print("rekod >>>>>> ${item.jenis} >> >> ${item.Jumlah} >> ${total} >> ${order.length}");
-            });
-          },
         ),
       ),
     );
